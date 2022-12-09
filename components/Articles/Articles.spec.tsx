@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 import { ArticleStats, Articles } from '@/components';
-import { fetcher, getWikimediaUrl } from '@/utils';
 import { ReactElement } from 'react';
+import { fetcher } from '@/utils';
 import { render } from '@testing-library/react';
 import useSWR from 'swr';
 
@@ -65,7 +65,7 @@ describe(Articles, () => {
   it('requests the articles for the selected date', () => {
     (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
     render(subject);
-    expect(useSWR).toHaveBeenCalledWith(getWikimediaUrl(someSelectedDate), fetcher);
+    expect(useSWR).toHaveBeenCalledWith([ `/api/get-top-articles/${someSelectedDate}`, someSelectedDate ], fetcher);
   });
 
   it('displays the error message if there was an error during the request', () => {

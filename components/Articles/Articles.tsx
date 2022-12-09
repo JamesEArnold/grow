@@ -1,6 +1,6 @@
-import { fetcher, getWikimediaUrl } from '@/utils';
 import { LoadingSkeleton } from '@/components';
 import { ReactElement } from 'react';
+import { fetcher } from '@/utils';
 import useSWR from 'swr';
 
 export type ArticleStats = {
@@ -25,7 +25,7 @@ type ArticleProps = {
 
 export const Articles = ({ articlesToDisplay, selectedDate }: ArticleProps): ReactElement => {
   const { data, error } = useSWR<{ items: WikimediaResponse[] }>(
-    getWikimediaUrl(selectedDate), fetcher,
+    [ `/api/get-top-articles/${selectedDate}`, selectedDate ], fetcher,
   );
 
   if (error) {
