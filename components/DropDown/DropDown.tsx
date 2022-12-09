@@ -10,7 +10,6 @@ type DropDownProps = {
   setSelectedRow: Dispatch<SetStateAction<number>>,
 }
 
-/** A drop down to select a number of rows to be displayed */
 export const DropDown = ({
   title,
   rows,
@@ -35,13 +34,14 @@ export const DropDown = ({
       ref={dropDownRef}
       id='row-count'
       data-testid='dropdown-rows-button'
+      aria-label='Select rows'
     >
       <p>{selectedRow}</p>
       <ChevronDown className={classNames(showDropDown ? 'rotate-180' : '', 'transition text-slate-600')} />
     </button>
     {showDropDown &&
     <li
-      className='flex flex-col absolute top-16 bg-slate-100 last:rounded border-b-2 border-slate-300 shadow-lg'
+      className='flex flex-col absolute top-16 bg-slate-100 last:rounded border-b-2 border-slate-300 shadow-lg z-10'
     >
       {rows.map((row: number) => (
         <button

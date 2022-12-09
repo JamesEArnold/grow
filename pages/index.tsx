@@ -1,5 +1,6 @@
-import { Articles, DatePicker, DropDown, Nav } from '@/components';
+import { ArticleStats, DatePicker, DropDown, Nav, PinnedResults, SearchResults } from '@/components';
 import { subtractDaysFromADate } from '@/utils';
+import { useLocalStorageState } from '@/hooks/useLocalStorageState';
 import { useState } from 'react';
 
 const defaultRows = 100;
@@ -7,8 +8,9 @@ const rowsToDisplay = [ 25, 50, 75, 100, 200 ];
 const latestSelectableDate: string = subtractDaysFromADate(1);
 
 const Home = () => {
-  const [ numberOfArticlesToDisplay, setNumberOfArticlesToDisplay ] = useState<number>(defaultRows);
+  const [ numberOfResultsToDisplay, setNumberOfResultsToDisplay ] = useState<number>(defaultRows);
   const [ selectedDate, setSelectedDate ] = useState<string>(latestSelectableDate);
+  const [ pinnedResults, setPinnedResults ] = useLocalStorageState<ArticleStats[]>('pinned-articles', []);
 
   return <div className='relative'>
     <Nav title='Grow Take Home' />
@@ -22,14 +24,20 @@ const Home = () => {
         />
         <DropDown
           rows={rowsToDisplay}
-          selectedRow={numberOfArticlesToDisplay}
-          setSelectedRow={setNumberOfArticlesToDisplay}
+          selectedRow={numberOfResultsToDisplay}
+          setSelectedRow={setNumberOfResultsToDisplay}
           title='Number of Results'
         />
       </div>
-      <Articles
-        articlesToDisplay={numberOfArticlesToDisplay}
+      <PinnedResults
+        pinnedResults={pinnedResults}
+        setPinnedResults={setPinnedResults}
+      />
+      <SearchResults
+        numberOfResultsToDisplay={numberOfResultsToDisplay}
         selectedDate={selectedDate}
+        pinnedResults={pinnedResults}
+        setPinnedResults={setPinnedResults}
       />
     </div>
   </div>;

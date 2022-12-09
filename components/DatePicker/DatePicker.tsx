@@ -45,7 +45,8 @@ export const DatePicker = ({
       {title}
     </label>
     <div
-      className='inline-flex justify-between w-40 border-solid border-2 border-slate-300 hover:border-slate-400 ease-in-out duration-300 rounded p-1 cursor-pointer'
+      className='inline-flex justify-between w-40 border-solid border-2 border-slate-300
+      hover:border-slate-400 ease-in-out duration-300 rounded p-1 cursor-pointer'
       onClick={() => openCalendar(calendarRef)}
     >
       <input

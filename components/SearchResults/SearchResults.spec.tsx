@@ -1,8 +1,8 @@
 /** @jest-environment jsdom */
-import { ArticleStats, Articles } from '@/components';
+import { ArticleStats, SearchResults } from '@/components';
+import { fireEvent, render } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { fetcher } from '@/utils';
-import { render } from '@testing-library/react';
 import useSWR from 'swr';
 
 jest.mock('swr');
@@ -12,6 +12,8 @@ const someSelectedDate = '2022/12/01';
 const someArticleName = 'some_article';
 const someRank = 1;
 const someViews = 10;
+const somePinnedArticles: ArticleStats[] = [];
+const someSetPinnedArticles = jest.fn();
 const someArticle: ArticleStats = {
   article: someArticleName,
   views: someViews,
@@ -30,42 +32,24 @@ const someResponse = (articles: ArticleStats[]) => ({
 
 let subject: ReactElement;
 
-describe(Articles, () => {
+describe(SearchResults, () => {
   beforeEach(() => {
     jest.resetAllMocks();
     subject =
-      <Articles
-        articlesToDisplay={someNumberOfArticlesToDisplay}
+      <SearchResults
+        numberOfResultsToDisplay={someNumberOfArticlesToDisplay}
         selectedDate={someSelectedDate}
+        pinnedResults={somePinnedArticles}
+        setPinnedResults={someSetPinnedArticles}
       />;
-  });
-
-  it('renders the title of the article with _ removed', () => {
-    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
-    const { getByText } = render(subject);
-    getByText(someArticleName.replaceAll(/_/g, ' '));
-  });
-
-  it('renders the views of the article', () => {
-    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
-    const { getByText } = render(subject);
-    getByText(`Views: ${someViews.toLocaleString()}`);
-  });
-
-  it('renders the rank of the article', () => {
-    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
-    const { getByText } = render(subject);
-    getByText(`Rank: ${someRank}`);
   });
 
   it('renders the number of articles the user selected', () => {
     const tenArticles: ArticleStats[] = Array(10).fill(someArticle);
     (useSWR as jest.Mock).mockReturnValue(someResponse(tenArticles));
-    const { getByTestId } = render(subject);
+    const { getAllByTestId } = render(subject);
 
-    tenArticles.slice(0, someNumberOfArticlesToDisplay).map((element, index) => {
-      getByTestId(`article-${index}`);
-    });
+    expect(getAllByTestId(someArticleName)).toHaveLength(someNumberOfArticlesToDisplay);
   });
 
   it('requests the articles for the selected date', () => {
@@ -84,5 +68,28 @@ describe(Articles, () => {
     (useSWR as jest.Mock).mockReturnValue({});
     const { getByTestId } = render(subject);
     getByTestId('loading-skeleton-0');
+  });
+
+  it('pins the article when clicked', () => {
+    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
+    const { getByTestId } = render(subject);
+
+    fireEvent.click(getByTestId(someArticleName));
+    expect(someSetPinnedArticles).toHaveBeenCalledWith([ someArticle ]);
+  });
+
+  it('does not pin the article if it is already pinned', () => {
+    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
+    const { getByTestId } = render(
+      <SearchResults
+        numberOfResultsToDisplay={someNumberOfArticlesToDisplay}
+        selectedDate={someSelectedDate}
+        pinnedResults={[ someArticle ]}
+        setPinnedResults={someSetPinnedArticles}
+      />,
+    );
+
+    fireEvent.click(getByTestId(someArticleName));
+    expect(someSetPinnedArticles).not.toHaveBeenCalled();
   });
 });
