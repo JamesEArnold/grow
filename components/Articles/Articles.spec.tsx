@@ -49,7 +49,13 @@ describe(Articles, () => {
   it('renders the views of the article', () => {
     (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
     const { getByText } = render(subject);
-    getByText(someViews);
+    getByText(`Views: ${someViews.toLocaleString()}`);
+  });
+
+  it('renders the rank of the article', () => {
+    (useSWR as jest.Mock).mockReturnValue(someResponse([ someArticle ]));
+    const { getByText } = render(subject);
+    getByText(`Rank: ${someRank}`);
   });
 
   it('renders the number of articles the user selected', () => {

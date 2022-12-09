@@ -44,7 +44,7 @@ export const Articles = ({ articlesToDisplay, selectedDate }: ArticleProps): Rea
   const { articles }: WikimediaResponse = data.items[0];
 
   return <div className='w-full'>
-    {articles.slice(0, articlesToDisplay).map(({ article, views }: ArticleStats, index) => (
+    {articles.slice(0, articlesToDisplay).map(({ article, views, rank }: ArticleStats, index) => (
       <div
         key={article}
         className='flex justify-between mx-auto my-5 max-w-sm p-10 rounded-lg shadow-xl bg-gray-800 border-gray-700 hover:bg-gray-700'
@@ -53,9 +53,13 @@ export const Articles = ({ articlesToDisplay, selectedDate }: ArticleProps): Rea
         <h5 className='mb-2 text-2xl font-bold tracking-tight text-white break-words flex-1'>
           {article.replaceAll(/_/g, ' ')}
         </h5>
-        <div className='ml-2'>
-          <p className='font-normal text-gray-400'>Views:</p>
-          <p className='font-normal text-gray-400'>{views}</p>
+        <div className='flex flex-col'>
+          <div className='ml-2'>
+            <p className='font-normal text-gray-400'>Rank: {rank}</p>
+          </div>
+          <div className='ml-2'>
+            <p className='font-normal text-gray-400'>Views: {views.toLocaleString()}</p>
+          </div>
         </div>
       </div>
     ))}
